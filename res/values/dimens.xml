@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 行布局公共空心按钮的大小 -->
+    <dimen name="btn_listitem_height">24.66dp</dimen>
+    <dimen name="btn_listitem_corner">12.33dp</dimen>
+
+</resources>
