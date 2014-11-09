@@ -40,7 +40,7 @@ public class ResultsAnimationView extends GLSurfaceView implements GLSurfaceView
 
     private float[] projectionMatrix = new float[16];
 
-    private int duration = 400;
+    private int duration = 300;
 
     private static final int WHAT_GL_VIEW = 1;
 
@@ -61,7 +61,9 @@ public class ResultsAnimationView extends GLSurfaceView implements GLSurfaceView
                 contentView.setVisibility(msg.arg1);
             }
             if (msg.what == WHAT_GL_VIEW) {
-                ResultsAnimationView.this.setVisibility(msg.arg1);
+            		if(msg.arg1==View.VISIBLE){
+            			 ResultsAnimationView.this.setVisibility(msg.arg1);
+            		}
             }
             if(msg.what== WHAT_DO_CALLBACK_FOR_OPENED){
                 if(callback!=null){
@@ -110,30 +112,29 @@ public class ResultsAnimationView extends GLSurfaceView implements GLSurfaceView
         glViewport(0, 0, width, height);
         float ratio = width / (float) height;
         Matrix.orthoM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, -10f, 10f);
+        	 Bitmap bitmap = OrigamiUtils.loadBitmapFromView(this.contentView, this.contentView.getWidth(), this.contentView.getHeight());
+         origamiMesh.setBitmap(bitmap);
+         bitmap.recycle();
 
-        Bitmap bitmap = OrigamiUtils.loadBitmapFromView(this.contentView, this.getWidth(), this.getHeight());
-        origamiMesh.setBitmap(bitmap);
-        bitmap.recycle();
+         float left, top, right, bottom;
+         left = -ratio;
+         top = 1;
+         right = ratio;
+         bottom = -1;
 
-        float left, top, right, bottom;
-        left = -ratio;
-        top = 1;
-        right = ratio;
-        bottom = -1;
-
-        origamiMesh.setOrigamiRect(new RectF(left, top, right, bottom));
+         origamiMesh.setOrigamiRect(new RectF(left/2, top, right/2, bottom));
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
         glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        this.origamiMesh.draw(this.projectionMatrix);
+        	this.origamiMesh.draw(this.projectionMatrix);
     }
 
     public void openResults() {
-        if (!this.opened) {
+        //if (!this.opened) {
 
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
+            ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0.4f);
             valueAnimator.setDuration(duration);
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
@@ -159,11 +160,11 @@ public class ResultsAnimationView extends GLSurfaceView implements GLSurfaceView
             });
             valueAnimator.start();
         }
-    }
+   // }
 
     public void closeResults() {
         //if (opened) {
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0);
+            ValueAnimator valueAnimator = ValueAnimator.ofFloat(1, 0.4f);
             valueAnimator.setDuration(duration);
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override

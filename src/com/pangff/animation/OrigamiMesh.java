@@ -1,18 +1,15 @@
 package com.pangff.animation;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -251,10 +248,16 @@ public class OrigamiMesh {
     private void initPolygonsData() {
         float[] topPolygon = null, bottomPolygon = null, shadowPolygon = null;
 
-        float deltaY = (float) Math.abs((origamiRect.top - origamiRect.bottom) / 2 * Math.sin(this.factor * Math.PI / 2));
+        float deltaYO = this.factor==0?0:1;//(float) Math.abs((origamiRect.top - origamiRect.bottom) / 2 );
+        float deltaY = (float) Math.abs((origamiRect.top - origamiRect.bottom) / 2  * Math.sin(this.factor * Math.PI / 2));
 
+        float zO = 0;
+        float xO = Math.abs(5f * origamiRect.left / (5f + zO));
+        
         float z = (float) Math.cos(this.factor * Math.PI / 2f);
+        float z00 = (float) Math.sin(this.factor * Math.PI / 2f);
         float x = Math.abs(5f * origamiRect.left / (5f + z));
+        float xOO = Math.abs(5f * origamiRect.left / (5f - z));
 
         if (!animationFromBottom) {
             topPolygon = new float[]{
@@ -264,25 +267,46 @@ public class OrigamiMesh {
                     x, origamiRect.top - deltaY, 0          //右下
             };
 
+//            bottomPolygon = new float[]{
+//                    -x, origamiRect.top - deltaY, 0,
+//                    origamiRect.left, origamiRect.top - 2 * deltaY, 0,
+//                    x, origamiRect.top - deltaY, 0,
+//                    origamiRect.right, origamiRect.top - 2 * deltaY, 0
+//            };
             bottomPolygon = new float[]{
-                    -x, origamiRect.top - deltaY, 0,
-                    origamiRect.left, origamiRect.top - 2 * deltaY, 0,
-                    x, origamiRect.top - deltaY, 0,
-                    origamiRect.right, origamiRect.top - 2 * deltaY, 0
+                    -xO, origamiRect.top - deltaYO, 0,
+                    origamiRect.left, origamiRect.top - 2 * deltaYO, 0,
+                    xO, origamiRect.top - deltaYO, 0,
+                    origamiRect.right, origamiRect.top - 2 * deltaYO, 0
             };
         } else {
             //从下往上
-            bottomPolygon = new float[]{
-                    -x, origamiRect.bottom + deltaY, 0,
-                    origamiRect.left, origamiRect.bottom, 0,
-                    x, origamiRect.bottom + deltaY, 0,
-                    origamiRect.right, origamiRect.bottom, 0
-            };
+//            bottomPolygon = new float[]{
+//                    -x, origamiRect.bottom + deltaY, 0,
+//                    origamiRect.left, origamiRect.bottom, 0,
+//                    x, origamiRect.bottom + deltaY, 0,
+//                    origamiRect.right, origamiRect.bottom, 0
+//            };
+//        		Log.e("ddd", "X:"+x);
+//        		Log.e("ddd", "deltaY:"+deltaY);
+//        		Log.e("ddd", "xO:"+xO);
+//        		Log.e("ddd", "deltaYO:"+deltaYO);
+//        		
+//        		Log.e("ddd", "origamiRect.left:"+origamiRect.left);
+//        		Log.e("ddd", "origamiRect.bottom:"+origamiRect.bottom);
+//        		Log.e("ddd", "origamiRect.right:"+origamiRect.right);
+//        		Log.e("ddd", "origamiRect.top:"+origamiRect.top);
             topPolygon = new float[]{
-                    origamiRect.left, origamiRect.bottom + 2 * deltaY, 0,
-                    -x, origamiRect.bottom + deltaY, 0,
-                    origamiRect.right, origamiRect.bottom + 2 * deltaY, 0,
-                    x, origamiRect.bottom + deltaY, 0
+                    -xOO, origamiRect.bottom + 2 * deltaY, 0,
+                    -xO, origamiRect.bottom + deltaYO, 0,
+                    xOO, origamiRect.bottom + 2 * deltaY, 0,
+                    xO, origamiRect.bottom + deltaYO, 0
+            };
+            bottomPolygon = new float[]{
+                    -xO, origamiRect.top - deltaYO, 0,
+                    origamiRect.left, origamiRect.top - 2 * deltaYO, 0,
+                    xO, origamiRect.top - deltaYO, 0,
+                    origamiRect.right, origamiRect.top - 2 * deltaYO, 0
             };
         }
 
